@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -16,48 +17,92 @@ import static org.junit.Assert.*;
  */
 public class Lambda_02_Test {
 
-    // tag::PersonToAccountMapper[]
-    interface PersonToAccountMapper {
-        Account map(Person p);
-    }
-    // end::PersonToAccountMapper[]
+	// tag::PersonToAccountMapper[]
+	interface PersonToAccountMapper {
+		Account map(Person p);
+	}
+	// end::PersonToAccountMapper[]
 
-    // tag::map[]
-    private List<Account> map(List<Person> personList, PersonToAccountMapper mapper) {
-        // TODO implémenter la méthode
-        return null;
-    }
-    // end::map[]
+	// tag::PersonToAccountMapper[]
+	interface AccountToFirstnameMapper {
+		String map(Account p);
+	}
+	// end::PersonToAccountMapper[]
 
+	// tag::map[]
+	private List<Account> map(List<Person> personList, PersonToAccountMapper mapper) {
+		// implémenter la méthode
 
-    // tag::test_map_person_to_account[]
-    @Test
-    public void test_map_person_to_account() throws Exception {
+		List<Account> per = new ArrayList<Account>();
 
-        List<Person> personList = Data.buildPersonList(100);
+		for (Person p : personList) {
 
-        // TODO transformer la liste de personnes en liste de comptes
-        // TODO tous les objets comptes ont un solde à 100 par défaut
-        List<Account> result = map(personList, null);
+			per.add(mapper.map(p));
 
-        assertThat(result, hasSize(personList.size()));
-        assertThat(result, everyItem(hasProperty("balance", is(100))));
-        assertThat(result, everyItem(hasProperty("owner", notNullValue())));
-    }
-    // end::test_map_person_to_account[]
+		}
 
-    // tag::test_map_person_to_firstname[]
-    @Test
-    public void test_map_person_to_firstname() throws Exception {
+		return per;
+	}
+	// end::map[]
 
-        List<Person> personList = Data.buildPersonList(100);
+	// tag::map[]
+	private List<String> firstName(List<Account> accountList, AccountToFirstnameMapper acc) {
+		// implémenter la méthode
 
-        // TODO transformer la liste de personnes en liste de prénoms
-        List<String> result = null;
+		List<String> per = new ArrayList<String>();
 
-        assertThat(result, hasSize(personList.size()));
-        assertThat(result, everyItem(instanceOf(String.class)));
-        assertThat(result, everyItem(startsWith("first")));
-    }
-    // end::test_map_person_to_firstname[]
+		for (Account p : accountList) {
+
+			per.add(p.getOwner().getFirstname());
+
+		}
+
+		return per;
+	}
+	// end::map[]
+
+	// tag::test_map_person_to_account[]
+	@Test
+	public void test_map_person_to_account() throws Exception {
+
+		List<Person> personList = Data.buildPersonList(100);
+
+		// transformer la liste de personnes en liste de comptes
+		// tous les objets comptes ont un solde à 100 par défaut
+		List<Account> result = map(personList, person -> {
+			Account a = new Account();
+			a.setOwner(person);
+			a.setBalance(100);
+			return a;
+		});
+
+		assertThat(result, hasSize(personList.size()));
+		assertThat(result, everyItem(hasProperty("balance", is(100))));
+		assertThat(result, everyItem(hasProperty("owner", notNullValue())));
+	}
+	// end::test_map_person_to_account[]
+
+	// tag::test_map_person_to_firstname[]
+	@Test
+	public void test_map_person_to_firstname() throws Exception {
+
+		List<Person> personList = Data.buildPersonList(100);
+
+		// transformer la liste de personnes en liste de prénoms
+		List<Account> accountList = map(personList, person -> {
+			Account a = new Account();
+			a.setOwner(person);
+			a.setBalance(100);
+			return a;
+		});
+
+		List<String> result = firstName(accountList, ac -> ac.getOwner().getFirstname());
+
+		// (List<String>) personList
+
+		assertThat(result, hasSize(personList.size()));
+		assertThat(result, everyItem(instanceOf(String.class)));
+		assertThat(result, everyItem(startsWith("first")));
+	}
+	// end::test_map_person_to_firstname[]
 }
