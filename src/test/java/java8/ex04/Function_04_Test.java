@@ -16,64 +16,65 @@ import static org.junit.Assert.*;
  */
 public class Function_04_Test {
 
-    // tag::filterMethod[]
-   <T> List<T> filter(List<T> list, Predicate<T> predicate) {
-       List<T> result = new ArrayList<>();
-        for (T el: list) {
-            if(predicate.test(el)) {
-                result.add(el);
-            }
-        }
-       return result;
-    }
-    // end::filterMethod[]
+	// tag::filterMethod[]
+	<T> List<T> filter(List<T> list, Predicate<T> predicate) {
+		List<T> result = new ArrayList<>();
+		for (T el : list) {
+			if (predicate.test(el)) {
+				result.add(el);
+			}
+		}
+		return result;
+	}
+	// end::filterMethod[]
 
-    // PART 1 - ADULT
+	// PART 1 - ADULT
 
-    // tag::adult[]
-    // TODO Compléter la fonction
-    // TODO AGE >=18
-    Predicate<Person> adult = null;
-    // end::adult[]
+	// tag::adult[]
+	// TODO Compléter la fonction
+	// TODO AGE >=18
 
-    @Test
-    public void test_predicate() throws Exception {
+	Predicate<Person> adult = person -> person.getAge() >= 18;
+	// end::adult[]
 
-        List<Person> personList = Data.buildPersonList();
+	@Test
+	public void test_predicate() throws Exception {
 
-        // TODO invoquer la méthode filter pour que le test soit passant
-        List<Person> result = null;
+		List<Person> personList = Data.buildPersonList();
 
-        assertThat(result,  hasSize(4));
+		// TODO invoquer la méthode filter pour que le test soit passant
+		List<Person> result = filter(personList, adult);
 
-    }
+		assertThat(result, hasSize(4));
 
-    // PART 2 - ADULT AND LASTNAME=France AND FIRSTNAME=Armor
+	}
 
-    // tag::predicateand[]
-    // TODO compléter la fonction
-    // TODO le prédicat vérifie que le nom est "France"
-    Predicate<Person> lastnameIsFrance = p -> p.getLastname().equals("France");
+	// PART 2 - ADULT AND LASTNAME=France AND FIRSTNAME=Armor
 
+	// tag::predicateand[]
+	// TODO compléter la fonction
+	// TODO le prédicat vérifie que le nom est "France"
+	Predicate<Person> lastnameIsFrance = p -> p.getLastname().equals("France");
 
-    // TODO compléter la fonction
-    // TODO le prédicat vérifie que le prénom est "Armor"
-    Predicate<Person> firstnameIsArmor = p -> p.getFirstname().equals("Armor");
-    // end::predicateand[]
+	// TODO compléter la fonction
+	// TODO le prédicat vérifie que le prénom est "Armor"
+	Predicate<Person> firstnameIsArmor = p -> p.getFirstname().equals("Armor");
+	// end::predicateand[]
 
-    @Test
-    public void test_predicate_and() throws Exception {
+	@Test
+	public void test_predicate_and() throws Exception {
 
-        List<Person> personList = Data.buildPersonList();
+		List<Person> personList = Data.buildPersonList();
 
-        // TODO invoquer la méthode filter pour que le test soit passant
-        // TODO chaîner les prédicats adult, lastnameIsFrance et firstnameIsArmor avec la méthode and
-        List<Person> result = null;
+		// TODO invoquer la méthode filter pour que le test soit passant
+		// TODO chaîner les prédicats adult, lastnameIsFrance et firstnameIsArmor avec
+		// la méthode and
+		List<Person> result = filter(personList, adult.and(lastnameIsFrance.and(firstnameIsArmor)));
 
-        assertThat(result,  hasSize(1));
-        assertThat(result.get(0), hasProperty("firstname", is("Armor")));
-        assertThat(result.get(0), hasProperty("lastname", is("France")));
-        assertThat(result.get(0), hasProperty("age", is(25)));
+		assertThat(result, hasSize(1));
+		assertThat(result.get(0), hasProperty("firstname", is("Armor")));
+		assertThat(result.get(0), hasProperty("lastname", is("France")));
+		assertThat(result.get(0), hasProperty("age", is(25)));
 
-    }
+	}
 }
