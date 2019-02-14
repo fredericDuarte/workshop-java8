@@ -72,8 +72,7 @@ public class Function_01_Test {
 	// TODO Compléter la définition de cette fonction
 	// TODO Utiliser la méthode compose pour réutiliser les fonctions intToPerson et
 	// personToAccount
-	//private Function<Integer, Account> intToAccountWithCompose = intToPerson.compose(personToAccount);
-	private Function<Integer, Account> intToAccountWithCompose = intToPerson.andThen(personToAccount);
+	private Function<Integer, Account> intToAccountWithCompose = personToAccount.compose(intToPerson);
 	// end::intToAccountWithCompose[]
 
 	@Test
