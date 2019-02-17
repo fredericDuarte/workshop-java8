@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
@@ -21,9 +23,9 @@ import static org.junit.Assert.*;
 public class Stream_05_Test {
 
     // Chemin vers un fichier de données des naissances
-    private static final String NAISSANCES_DEPUIS_1900_CSV = "./naissances_depuis_1900.csv";
+    private static final String NAISSANCES_DEPUIS_1900_CSV = "naissances_depuis_1900.csv";
 
-    private static final String DATA_DIR = "./pizza-data";
+    private static final String DATA_DIR = "c:\\pizza-data";
 
 
     // Structure modélisant les informations d'une ligne du fichier
@@ -69,15 +71,24 @@ public class Stream_05_Test {
 
         // TODO utiliser la méthode java.nio.file.Files.lines pour créer un stream de lignes du fichier naissances_depuis_1900.csv
         // Le bloc try(...) permet de fermer (close()) le stream après utilisation
-        try (Stream<String> lines = null) {
+    	try (Stream<String> stream = Files.lines(Paths.get(DATA_DIR + NAISSANCES_DEPUIS_1900_CSV))) {
+    		 
 
             // TODO construire une MAP (clé = année de naissance, valeur = somme des nombres de naissance de l'année)
-            Map<String, Integer> result = null;
+            Map<String, Integer> result = stream.collect(Collectors.groupingBy( Function.identity(),
+                    Collectors.reducing(0, str -> 1, Integer::sum)) );
+            
+            stream.forEach(System.out::println);
 
 
             assertThat(result.get("2015"), is(8097));
             assertThat(result.get("1900"), is(5130));
-        }
+ 
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+ 
+
     }
 
     @Test
